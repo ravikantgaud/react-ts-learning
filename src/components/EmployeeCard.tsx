@@ -5,13 +5,13 @@ type EmployeeCardProps = {
     isActive: boolean;
 }
 
-function EmployeeCard({name, department, experience, isActive}:EmployeeCardProps) {
+function EmployeeCard({ name, department, experience, isActive }: EmployeeCardProps) {
     return(
-        <div className="emplyeeCard">
+        <div className="emplyee-card">
             <p>Name: {name}</p>
             <p>Department: {department}</p>
             <p>Experience: {experience} years</p>
-            <p>{isActive ? "Active" : "Deactive"}</p>
+            <p>{isActive ? "Active" : "Inactive"}</p>
         </div>
     );
 }

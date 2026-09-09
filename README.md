@@ -1,75 +1,49 @@
-# React + TypeScript + Vite
+# React + TypeScript Learning
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A hands-on learning repository for building job-ready React + TypeScript skills.
 
-Currently, two official plugins are available:
+## Day 1 — React Fundamentals
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Topics Learned
 
-## React Compiler
+- JSX
+- Functional Components
+- Props
+- TypeScript Props
+- Conditional Rendering
+- Array Rendering with `map()`
+- React `key`
+- Object Props
+- Reusable Components
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Practice
 
-## Expanding the ESLint configuration
+- Header Component
+- UserCard Component
+- ProductCard Component
+- EmployeeCard Component
+- Dynamic User List
+- Dynamic Product List
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Key Learnings
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- React components are reusable pieces of UI.
+- Props are read-only data passed from parent to child.
+- `map()` is used to render UI dynamically from arrays.
+- Each item in a dynamic list should have a stable `key`.
+- TypeScript helps define the expected shape of component props.
+- Passing an object as a prop can be useful when a component works with a complete domain entity.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Project Structure
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+src/
+├── components/
+│   ├── Header.tsx
+│   ├── UserCard.tsx
+│   ├── ProductCard.tsx
+│   └── EmployeeCard.tsx
+└── App.tsx
 
-```
+## Learning Approach
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+Learn → Practice → Build → Refactor → Explain → Commit → Push
