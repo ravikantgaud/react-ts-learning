@@ -47,3 +47,34 @@ src/
 ## Learning Approach
 
 Learn → Practice → Build → Refactor → Explain → Commit → Push
+
+## Day 2 - State, Events and Forms
+
+### Topics Learned
+
+- useState
+- State updates
+- Functional state updates
+- Controlled inputs
+- Event handling
+- TypeScript event typing
+- Form submission
+- Immutable state updates
+- map()
+- filter()
+- Derived data
+
+### Practice
+
+- Employee form
+- Add employee
+- Delete employee
+- Search employee
+
+### Key Learnings
+
+- React state controls dynamic UI.
+- Controlled inputs keep form values in React state.
+- State should not be mutated directly.
+- Functional updates are useful when the next state depends on the previous state
+- Derived data can be calculated instead of stored separately.
