@@ -2,6 +2,9 @@ import Header from './components/Header';
 import UserCard from './components/UserCard';
 import ProductCard from './components/ProductCard';
 import EmployeeCard from './components/EmployeeCard';
+import Counter from './components/Counter';
+import EmployeeSearch from './features/EmployeeSearch';
+import EmployeeForm from './features/EmployeeForm';
 
 const users = [
   {
@@ -91,6 +94,13 @@ function App(){
           ))
         }
       </div>
+      
+      <Counter />
+
+      <EmployeeSearch />
+
+      <EmployeeForm />
+
     </>
   )
 }
