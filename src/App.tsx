@@ -5,6 +5,7 @@ import EmployeeCard from './components/EmployeeCard';
 import Counter from './components/Counter';
 import EmployeeSearch from './features/EmployeeSearch';
 import EmployeeForm from './features/EmployeeForm';
+import EmployeeApi from './features/EmployeeApi';
 
 const users = [
   {
@@ -72,7 +73,7 @@ function App(){
   return (
     <>
       <Header title='Employee Management System' />
-      <Header title="Admin Dashboard" />
+      {/* <Header title="Admin Dashboard" />
 
       <div className='employees'>
         <EmployeeCard name='Ravikant' department='Frontent Engineering' experience={12} isActive={true} />
@@ -99,7 +100,9 @@ function App(){
 
       <EmployeeSearch />
 
-      <EmployeeForm />
+      <EmployeeForm /> */}
+
+      <EmployeeApi />
 
     </>
   )
