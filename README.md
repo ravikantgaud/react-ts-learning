@@ -128,3 +128,26 @@ Learn → Practice → Build → Refactor → Explain → Commit → Push
 DummyJSON Users API:
 
 https://dummyjson.com/users
+
+## Day 4 — React Router and SPA Structure
+
+### Topics Learned
+
+- Client-side routing
+- BrowserRouter
+- Routes and Route
+- Nested routes
+- Outlet
+- NavLink
+- Dynamic routes
+- useParams
+- Page vs component structure
+
+### Practice
+
+- Dashboard route
+- Employees route
+- Products route
+- Employee details route
+- 404 Not Found route
+- Shared application layout
