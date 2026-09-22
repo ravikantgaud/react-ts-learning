@@ -7,9 +7,9 @@ function AppLayout() {
             <Header title="Employee Management System" />
 
             <nav>
-                <NavLink to="/">Dashboard</NavLink> | 
-                <NavLink to="employees"> Employees</NavLink> | 
-                <NavLink to="products"> Products</NavLink>
+                <NavLink to="/" end>Dashboard</NavLink> | 
+                <NavLink to="/employees"> Employees</NavLink> | 
+                <NavLink to="/products"> Products</NavLink>
             </nav>
 
             <main>

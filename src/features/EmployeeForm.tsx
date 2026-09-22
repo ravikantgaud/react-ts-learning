@@ -39,7 +39,7 @@ function EmployeeForm() {
     });
 
     const handleDeleteEmployee = (id: number) => {
-        setEmployees((previousEmployee) => (
+        setEmployees(() => (
             employees.filter((employee) => employee.id !== id)
         ))
     }

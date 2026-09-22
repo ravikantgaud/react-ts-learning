@@ -138,7 +138,8 @@ https://dummyjson.com/users
 - Routes and Route
 - Nested routes
 - Outlet
-- NavLink
+- Link and NavLink
+- Index route
 - Dynamic routes
 - useParams
 - Page vs component structure
@@ -149,5 +150,15 @@ https://dummyjson.com/users
 - Employees route
 - Products route
 - Employee details route
+- Dynamic employee ID route
 - 404 Not Found route
 - Shared application layout
+- View Details navigation
+
+### Key Learnings
+
+- Client-side routing allows navigation between views without full document navigation.
+- Layout routes can render child routes through Outlet.
+- Dynamic route parameters can be accessed using useParams.
+- Link is useful for normal application navigation, while NavLink is useful when active-link styling is needed.
+- Pages represent route-level screens, while components represent reusable UI building blocks.

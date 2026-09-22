@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 
 type ApiUser = {
     id: number;
@@ -26,13 +27,13 @@ function EmployeeApi() {
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
 
-    const fetchEmployees = async (): Promise<EmployeesResponse> => {
+    const fetchEmployees = async (): Promise<UsersResponse> => {
         const response = await fetch("https://dummyjson.com/users");
 
         if(!response.ok){
             throw new Error("Failed to fetch employees");
         }
-        const data: EmployeesResponse = await response.json();
+        const data: UsersResponse = await response.json();
 
         console.log(data);
         
@@ -107,9 +108,10 @@ function EmployeeApi() {
                     <p>No employees found.</p>
                 ) : (
                     filteredEmployees.map((employee) => (
-                        <div className="employee-Card" key={employee.id}>
+                        <div className="employee-card" key={employee.id}>
                             <p>ID: {employee.id}</p>
                             <p>Name: {employee.name}</p>
+                            <Link to={`/employees/${employee.id}`}> View Details </Link>
                             <p>Email: {employee.email}</p>
                         </div>
                     ))  
