@@ -162,3 +162,36 @@ https://dummyjson.com/users
 - Dynamic route parameters can be accessed using useParams.
 - Link is useful for normal application navigation, while NavLink is useful when active-link styling is needed.
 - Pages represent route-level screens, while components represent reusable UI building blocks.
+
+## Day 5 — Route-based API Fetching
+
+### Topics Learned
+
+- Dynamic route parameters
+- useParams
+- Route-based API calls
+- useEffect dependencies
+- Single-resource API fetching
+- Loading state
+- Error handling
+- Retry functionality
+- API model vs application model
+- Data transformation
+
+### Practice
+
+- Employee details route
+- Fetch employee by ID
+- Dynamic `/employees/:id` route
+- API response mapping
+- Loading and error states
+- Retry functionality
+- Back to employee list
+
+### Key Learnings
+
+- Route parameters can drive API requests.
+- A route parameter can be used as a dependency of useEffect.
+- List and detail API responses can have different TypeScript models.
+- API data can be transformed into an application-specific model before storing it in state.
+- Async data can be represented with nullable state such as `Employee | null`.
