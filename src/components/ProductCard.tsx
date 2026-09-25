@@ -5,7 +5,7 @@ type ProductCardProps = {
     inStock: boolean;
 }
 
-function ProductCard({ id, name, price, inStock }: ProductCardProps){
+function ProductCard({ name, price, inStock }: ProductCardProps){
     return(
         <div className="product-card">
             <p>{name}</p>
