@@ -196,12 +196,87 @@ https://dummyjson.com/users
 - API data can be transformed into an application-specific model before storing it in state.
 - Async data can be represented with nullable state such as `Employee | null`.
 
-### Day 6 — State Management
+## Day 6 — State Management with Context API & Redux Toolkit
 
-- Compared local state, Context API, and Redux Toolkit.
-- Created a Theme Context with a custom hook.
-- Configured Redux Toolkit store and typed React-Redux hooks.
-- Created a favorites slice with addFavorite and removeFavorite.
-- Connected the employee API list to Redux favorites.
-- Learned the UI → dispatch → reducer → store → selector → UI flow.
-- Kept employee API data in local state and favorite IDs in Redux.
+### Part 1 — State Management Decisions
+
+Learned how to decide where application state should live:
+
+* Local component state using `useState`
+* Lifting state up
+* Context API for shared state
+* Redux Toolkit for shared/complex application state
+
+### Part 2 — Theme Context
+
+Implemented a Theme Context with a custom `useTheme()` hook.
+
+Learned:
+
+* `createContext`
+* `useContext`
+* Context Provider
+* Custom hooks
+* Sharing theme state across components
+
+### Part 3 — Redux Toolkit Favorites
+
+Implemented Redux Toolkit for managing favorite employees.
+
+Created:
+
+* Redux store using `configureStore`
+* Favorites slice using `createSlice`
+* Typed Redux hooks using `useAppDispatch` and `useAppSelector`
+* Redux `<Provider>`
+* `addFavorite` and `removeFavorite` actions
+* Duplicate favorite protection
+
+### Redux State Design
+
+Redux stores only employee IDs:
+
+```ts
+favoriteEmployeeIds: number[]
+```
+
+Employee details remain in API/application state.
+
+This avoids duplicating employee objects and keeps a clear separation between:
+
+* API/Application state → employee details
+* Redux state → favorite employee relationship
+
+### Employee Favorites Flow
+
+```text
+Employee API
+     ↓
+Employee details
+     ↓
+Employee ID
+     ↓
+Redux Favorites
+     ↓
+favoriteEmployeeIds[]
+     ↓
+isFavorite
+     ↓
+Add Favorite / Remove Favorite
+```
+
+### Key Concepts Learned
+
+* Redux Store
+* Slice
+* Actions
+* Reducers
+* `configureStore`
+* `createSlice`
+* `useSelector`
+* `useDispatch`
+* Redux Toolkit + TypeScript
+* Immer and mutation-style reducer syntax
+* Global vs local state
+* Avoiding duplicated state
+* State invariants / duplicate protection

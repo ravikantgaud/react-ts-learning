@@ -15,7 +15,9 @@ const favoritesSlice = createSlice({
 
     reducers: {
         addFavorite: (state, action: PayloadAction<number>) => {
-            state.favoriteEmployeeIds.push(action.payload);
+            if(!state.favoriteEmployeeIds.includes(action.payload)) {
+                state.favoriteEmployeeIds.push(action.payload);
+            }
         },
 
         removeFavorite: (state, action: PayloadAction<number>) => {

@@ -36,8 +36,6 @@ function EmployeeApi() {
             throw new Error("Failed to fetch employees");
         }
         const data: UsersResponse = await response.json();
-
-        console.log(data);
         
         return data;
     }
@@ -129,7 +127,7 @@ function EmployeeApi() {
                                         if(isFavorite) {
                                             dispatch(removeFavorite(employee.id));
                                         } else{
-                                            dispatch(addFavorite(employee.id))
+                                            dispatch(addFavorite(employee.id));
                                         }
                                     }}
                                 >
