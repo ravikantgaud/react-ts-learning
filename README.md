@@ -195,3 +195,13 @@ https://dummyjson.com/users
 - List and detail API responses can have different TypeScript models.
 - API data can be transformed into an application-specific model before storing it in state.
 - Async data can be represented with nullable state such as `Employee | null`.
+
+### Day 6 — State Management
+
+- Compared local state, Context API, and Redux Toolkit.
+- Created a Theme Context with a custom hook.
+- Configured Redux Toolkit store and typed React-Redux hooks.
+- Created a favorites slice with addFavorite and removeFavorite.
+- Connected the employee API list to Redux favorites.
+- Learned the UI → dispatch → reducer → store → selector → UI flow.
+- Kept employee API data in local state and favorite IDs in Redux.

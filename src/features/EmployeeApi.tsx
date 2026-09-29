@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { addFavorite, removeFavorite } from "./favorites/favoritesSlice";
 
 type ApiUser = {
     id: number;
@@ -77,6 +79,12 @@ function EmployeeApi() {
         employee.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const dispatch = useAppDispatch();
+
+    const favoriteEmployeeIds = useAppSelector(
+        (state) => state.favorites.favoriteEmployeeIds
+    );
+
     if(loading){
         return <p>Loading employees...</p>
     }
@@ -107,14 +115,29 @@ function EmployeeApi() {
                 (
                     <p>No employees found.</p>
                 ) : (
-                    filteredEmployees.map((employee) => (
-                        <div className="employee-card" key={employee.id}>
-                            <p>ID: {employee.id}</p>
-                            <p>Name: {employee.name}</p>
-                            <Link to={`/employees/${employee.id}`}> View Details </Link>
-                            <p>Email: {employee.email}</p>
-                        </div>
-                    ))  
+                    filteredEmployees.map((employee) => {
+                        const isFavorite = favoriteEmployeeIds.includes(employee.id);
+
+                        return (
+                            <div className="employee-card" key={employee.id}>
+                                <p>ID: {employee.id}</p>
+                                <p>Name: {employee.name}</p>
+                                <Link to={`/employees/${employee.id}`}> View Details </Link>
+                                <p>Email: {employee.email}</p>
+                                <button type="button"
+                                    onClick={() => {
+                                        if(isFavorite) {
+                                            dispatch(removeFavorite(employee.id));
+                                        } else{
+                                            dispatch(addFavorite(employee.id))
+                                        }
+                                    }}
+                                >
+                                    {isFavorite ? "Remove Favorite" : "Add Favorite"}
+                                </button>
+                            </div>
+                        )
+                    }) 
                 )
             }
         </div>
