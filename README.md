@@ -280,3 +280,60 @@ Add Favorite / Remove Favorite
 * Global vs local state
 * Avoiding duplicated state
 * State invariants / duplicate protection
+
+## Day 7 — Favorites Page with Redux Integration
+
+### What I built
+
+Created a dedicated **Favorites page** that reads favorite employee IDs from Redux and displays the corresponding employee details fetched from the API.
+
+### Features implemented
+
+* Created a dedicated `Favorites.tsx` page.
+* Read `favoriteEmployeeIds` from Redux using `useAppSelector`.
+* Fetched employee data from the API.
+* Added API response error handling.
+* Added loading and error states.
+* Added Retry functionality.
+* Mapped API user data into the application's `Employee` model.
+* Used `filter()` and `includes()` to match employee details with favorite employee IDs.
+* Added an empty state when no employees are marked as favorites.
+* Added `View Details` navigation for favorite employees.
+* Added `/favorites` route using React Router.
+* Added Favorites navigation link using `NavLink`.
+
+### Redux + API Data Flow
+
+```text
+Redux Store
+    ↓
+favoriteEmployeeIds
+    ↓
+Favorites Page
+    ↓
+Fetch employee details from API
+    ↓
+filter() + includes()
+    ↓
+Favorite employee details
+    ↓
+Display in UI
+```
+
+### State Ownership
+
+```text
+Redux
+→ favoriteEmployeeIds
+
+API / Application State
+→ employee details
+
+React Router
+→ page navigation
+```
+
+### Key Concepts Learned
+
+* Reading shared Redux state with `useAppSelector`.
+* Keeping only IDs in Redux instead of dupl
