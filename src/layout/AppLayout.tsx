@@ -9,6 +9,7 @@ function AppLayout() {
             <nav>
                 <NavLink to="/" end>Dashboard</NavLink> | 
                 <NavLink to="/employees"> Employees</NavLink> | 
+                <NavLink to="/favorites"> Favorites</NavLink> | 
                 <NavLink to="/products"> Products</NavLink>
             </nav>
 
