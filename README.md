@@ -304,7 +304,6 @@ Created a dedicated **Favorites page** that reads favorite employee IDs from Red
 
 ### Redux + API Data Flow
 
-```text
 Redux Store
     ↓
 favoriteEmployeeIds
@@ -318,11 +317,10 @@ filter() + includes()
 Favorite employee details
     ↓
 Display in UI
-```
+
 
 ### State Ownership
 
-```text
 Redux
 → favoriteEmployeeIds
 
@@ -331,9 +329,30 @@ API / Application State
 
 React Router
 → page navigation
-```
 
 ### Key Concepts Learned
 
 * Reading shared Redux state with `useAppSelector`.
-* Keeping only IDs in Redux instead of dupl
+* Keeping only IDs in Redux instead of duplicating complete employee objects.
+* Using `filter()` to create a filtered employee array.
+* Using `includes()` to check whether an employee ID exists in the favorite IDs list.
+* Combining Redux state with API data.
+* Handling loading, error, retry, and empty states.
+* Connecting Redux state with React Router pages.
+* Keeping API-owned employee details separate from Redux-owned favorite relationships.
+
+### Architecture Principle
+
+> **API owns employee details; Redux owns the favorite relationship.**
+
+This avoids duplicating employee data in Redux and keeps a clear separation of responsibilities.
+
+### Testing Completed
+
+* Add an employee to favorites.
+* Display multiple favorite employees.
+* Remove an employee from favorites.
+* Verify the empty favorites state.
+* Navigate between Employees, Favorites, and Employee Details pages.
+* Verify that Redux favorite state is shared correctly between pages.
+* Verify API error and Retry handling.
