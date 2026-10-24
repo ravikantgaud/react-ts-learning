@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo, useCallback, useMemo } from "react";
 import { Link } from "react-router";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { addFavorite, removeFavorite } from "./favorites/favoritesSlice";
+import { selectFavoriteEmployeeIds } from "./favorites/favoritesSelectors";
 
 type ApiUser = {
     id: number;
@@ -23,6 +24,29 @@ type UsersResponse = {
     limit: number;
 }
 
+const ApiEmployeeCard = memo(function ApiEmployeeCard({
+        employee,
+        isFavorite,
+        onToggleFavorite,
+    }: {
+        employee: Employee;
+        isFavorite: boolean;
+        onToggleFavorite: (id: number, isFavorite: boolean) => void;
+    }) {
+        console.log("ApiEmployeeCard rendered:", employee.id);
+
+        return (
+            <div>
+                <h3>{employee.name}</h3>
+                <p>{employee.email}</p>
+
+                <button onClick={() => onToggleFavorite(employee.id, isFavorite)}>
+                    {isFavorite ? "Remove Favorite" : "Add Favorite"}
+                </button>
+            </div>
+        );
+    });
+    
 function EmployeeApi() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -73,14 +97,26 @@ function EmployeeApi() {
         loadEmployees();
     }
 
-    const filteredEmployees = employees.filter((employee) => 
-        employee.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredEmployees = useMemo(() => {
+        console.log("Filtering Employees");
+        return employees.filter((employee) => 
+           employee.name.toLowerCase().includes(searchTerm.toLowerCase())
+       );        
+    }, [employees, searchTerm])
 
     const dispatch = useAppDispatch();
 
-    const favoriteEmployeeIds = useAppSelector(
-        (state) => state.favorites.favoriteEmployeeIds
+    const favoriteEmployeeIds = useAppSelector(selectFavoriteEmployeeIds);
+
+    const handleToggleFavorite = useCallback(
+        (employeeId: number, isFavorite: boolean) => {
+            if (isFavorite) {
+                dispatch(removeFavorite(employeeId));
+            } else {
+                dispatch(addFavorite(employeeId));
+            }
+        },
+        [dispatch]
     );
 
     if(loading){
@@ -104,6 +140,7 @@ function EmployeeApi() {
                 <input type="text"
                         name="search"
                         placeholder="Search employee..."
+                        aria-label="Search employees"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)} />
             </p>
@@ -117,23 +154,12 @@ function EmployeeApi() {
                         const isFavorite = favoriteEmployeeIds.includes(employee.id);
 
                         return (
-                            <div className="employee-card" key={employee.id}>
-                                <p>ID: {employee.id}</p>
-                                <p>Name: {employee.name}</p>
-                                <Link to={`/employees/${employee.id}`}> View Details </Link>
-                                <p>Email: {employee.email}</p>
-                                <button type="button"
-                                    onClick={() => {
-                                        if(isFavorite) {
-                                            dispatch(removeFavorite(employee.id));
-                                        } else{
-                                            dispatch(addFavorite(employee.id));
-                                        }
-                                    }}
-                                >
-                                    {isFavorite ? "Remove Favorite" : "Add Favorite"}
-                                </button>
-                            </div>
+                            <ApiEmployeeCard
+                                key={employee.id}
+                                employee={employee}
+                                isFavorite={isFavorite}
+                                onToggleFavorite={handleToggleFavorite}
+                            />
                         )
                     }) 
                 )

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAppSelector } from "../../app/hooks";
 import { Link } from "react-router";
+import { selectFavoriteEmployeeIds, selectSortedFavoriteEmployeeIds } from "./favoritesSelectors";
 
 type ApiUser = {
     id: number,
@@ -66,9 +67,8 @@ function Favorites() {
 
     }
     
-    const favoriteEmployeeIds = useAppSelector(
-        (state) => state.favorites.favoriteEmployeeIds
-    );
+    const favoriteEmployeeIds = useAppSelector(selectFavoriteEmployeeIds);
+    const favoriteCount = useAppSelector(selectSortedFavoriteEmployeeIds);
 
     useEffect(() => {
         loadEmployees();
@@ -96,7 +96,7 @@ function Favorites() {
     }
     return (
         <div>
-            <h2>Favorite Employees</h2>
+            <h2>Favorite Employees ({favoriteCount})</h2>
             {
                 (filteredEmployees.length === 0) ? (
                     <p>No employee marked as favorite.</p>

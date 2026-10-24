@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 type EmployeeCardProps = {
     name : string;
     department : string;
@@ -6,12 +8,17 @@ type EmployeeCardProps = {
 }
 
 function EmployeeCard({ name, department, experience, isActive }: EmployeeCardProps) {
+    const [active, setActive] = useState(isActive);
     return(
         <div className="emplyee-card">
             <p>Name: {name}</p>
             <p>Department: {department}</p>
             <p>Experience: {experience} years</p>
-            <p>{isActive ? "Active" : "Inactive"}</p>
+            <p>{active ? "Active" : "Inactive"}</p>
+
+            <button onClick={() => setActive((previous) => !previous)}>
+                Toggle Status
+            </button>
         </div>
     );
 }
