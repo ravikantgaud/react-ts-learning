@@ -356,3 +356,53 @@ This avoids duplicating employee data in Redux and keeps a clear separation of r
 * Navigate between Employees, Favorites, and Employee Details pages.
 * Verify that Redux favorite state is shared correctly between pages.
 * Verify API error and Retry handling.
+
+## Day 16 — Hands-on React Testing
+
+### Testing tools
+- Vitest
+- React Testing Library
+- `@testing-library/user-event`
+- `@testing-library/jest-dom`
+
+### EmployeeCard tests
+- Verify employee information is displayed correctly.
+- Verify Active and Inactive states.
+- Verify employee status toggles when the button is clicked.
+
+### Employee API tests
+- Verify loading state while an API request is pending.
+- Verify employee data after a successful API response.
+- Verify error handling when the API request fails.
+- Verify Retry makes another API request.
+- Verify employee search and case-insensitive filtering.
+- Verify the empty state when no employees match the search.
+- Verify Redux Add Favorite and Remove Favorite interactions.
+
+### Key concepts learned
+- Unit testing vs. integration testing
+- `getByText`, `queryByText`, and `findByText`
+- Mocking API requests with Vitest
+- Testing asynchronous UI updates
+- Testing user interactions with `userEvent`
+- Testing Redux state changes through visible UI behavior
+
+### Run tests
+
+Run tests in watch mode:
+
+```bash
+npm run test
+```
+
+Run all tests once:
+
+```bash
+npm run test:run
+```
+
+### Progress
+- EmployeeCard: 4 passing tests
+- Employee API: 8 passing tests
+- Total: 12 passing tests
+
