@@ -406,3 +406,32 @@ npm run test:run
 - Employee API: 8 passing tests
 - Total: 12 passing tests
 
+## Day 17 — Advanced React Testing & Test Quality
+
+### Testing improvements
+- Tested the loading state while a Retry API request is pending.
+- Tested successful recovery after an API failure.
+- Verified that the error message disappears after a successful retry.
+- Verified that employee data appears and the loading state clears after recovery.
+- Created a `createAppStore()` factory to provide a fresh Redux store for each test.
+- Improved test isolation to prevent Redux state from leaking between tests.
+
+### Testing concepts learned
+- `findByText()` for elements that appear asynchronously.
+- `waitFor()` for assertions that need to be retried until they pass.
+- `queryByText()` for checking whether an element is absent.
+- Unit testing vs. integration testing.
+- Testing API loading, error, retry, and recovery states.
+- Testing Redux interactions through observable UI behavior.
+
+### Files updated
+- `src/app/store.ts`
+- `src/features/EmployeeApi.test.tsx`
+- `README.md`
+
+### Validation
+- TypeScript check: `npx tsc --noEmit`
+- Test command: `npm run test:run`
+- EmployeeCard tests: 4 passed
+- Employee API tests: 10 passed
+- Total: 14 tests passed across 2 test files

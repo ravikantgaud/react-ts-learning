@@ -2,7 +2,7 @@ import { render, screen, cleanup } from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
 import EmployeeApi from "./EmployeeApi";
 import { Provider } from "react-redux";
-import { store } from "../app/store";
+import { createAppStore } from "../app/store";
 import userEvent from "@testing-library/user-event";
 
 afterEach(() => {
@@ -11,12 +11,14 @@ afterEach(() => {
 });
 
 test("displays loading message while API request is pending", () => {
+    const testStore = createAppStore();
+
     vi.spyOn(globalThis, "fetch").mockImplementation(
         () => new Promise<Response>(() => {})
     );
 
     render(
-        <Provider store={store}>
+        <Provider store={testStore}>
             <EmployeeApi />
         </Provider>
     );
@@ -27,6 +29,8 @@ test("displays loading message while API request is pending", () => {
 })
 
 test("displays employees when API request succeeds", async () => {
+    const testStore = createAppStore();
+
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
         ok: true,
         json: async () => ({
@@ -51,7 +55,7 @@ test("displays employees when API request succeeds", async () => {
     } as Response);
 
     render(
-        <Provider store={store}>
+        <Provider store={testStore}>
             <EmployeeApi />
         </Provider>
     );
@@ -66,13 +70,15 @@ test("displays employees when API request succeeds", async () => {
 });
 
 test("displays error message when API request fails", async () => {
+    const testStore = createAppStore();
+
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
         ok: false,
         status: 500
     } as Response);
 
     render(
-        <Provider store={store}>
+        <Provider store={testStore}>
             <EmployeeApi />
         </Provider>
     );
@@ -84,6 +90,7 @@ test("displays error message when API request fails", async () => {
 test("retries API request when Retry button is clicked", async () => {
     const user = userEvent.setup();
     const fetchMock = vi.spyOn(globalThis, "fetch");
+    const testStore = createAppStore();
 
     fetchMock.mockResolvedValueOnce({
         ok: false,
@@ -108,7 +115,7 @@ test("retries API request when Retry button is clicked", async () => {
     } as Response)
 
     render(
-        <Provider store={store}>
+        <Provider store={testStore}>
             <EmployeeApi />
         </Provider>
     )
@@ -124,6 +131,7 @@ test("retries API request when Retry button is clicked", async () => {
 
 test("filters employees when the user searches by name", async () => {
     const user = userEvent.setup();
+    const testStore = createAppStore();
 
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
         ok: true,
@@ -149,7 +157,7 @@ test("filters employees when the user searches by name", async () => {
     } as Response);
 
     render(
-        <Provider store={store}>
+        <Provider store={testStore}>
             <EmployeeApi />
         </Provider>
     );
@@ -170,6 +178,7 @@ test("filters employees when the user searches by name", async () => {
 
 test("displays no employees found when search has no matches", async () => {
     const user = userEvent.setup();
+    const testStore = createAppStore();
 
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
         ok: true,
@@ -189,7 +198,7 @@ test("displays no employees found when search has no matches", async () => {
     } as Response);
 
     render(
-        <Provider store={store}>
+        <Provider store={testStore}>
             <EmployeeApi />
         </Provider>
     );
@@ -207,6 +216,7 @@ test("displays no employees found when search has no matches", async () => {
 
 test("searches employees case-insensitively", async () => {
     const user = userEvent.setup();
+    const testStore = createAppStore();
 
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
         ok: true,
@@ -223,7 +233,7 @@ test("searches employees case-insensitively", async () => {
     } as Response);
 
     render(
-        <Provider store={store}>
+        <Provider store={testStore}>
             <EmployeeApi />
         </Provider>
     );
@@ -239,6 +249,7 @@ test("searches employees case-insensitively", async () => {
 
 test("adds and remove an employee from favorites", async () => {
     const user = userEvent.setup();
+    const testStore = createAppStore();
 
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
         ok: true,
@@ -258,7 +269,7 @@ test("adds and remove an employee from favorites", async () => {
     } as Response);
 
     render(
-        <Provider store={store}>
+        <Provider store={testStore}>
             <EmployeeApi />
         </Provider>
     );
@@ -283,4 +294,91 @@ test("adds and remove an employee from favorites", async () => {
     expect(
         screen.getByRole("button", { name: "Add Favorite" })
     ).toBeInTheDocument();
+});
+
+test("displays loading while retry request is pending", async () => {
+    const user = userEvent.setup();
+    const testStore = createAppStore();
+
+    const mock = vi.spyOn(globalThis, "fetch");
+    mock.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+    } as Response);
+
+    mock.mockImplementationOnce(
+        () => new Promise<Response>(() => {})
+    );
+
+    render(
+        <Provider store={testStore}>
+            <EmployeeApi />
+        </Provider>
+    );
+
+    expect(await screen.findByText("Error: Failed to fetch employees")).toBeInTheDocument()
+    expect(screen.getByRole("button", { name : "Retry" })).toBeInTheDocument();
+
+    await user.click(
+        screen.getByRole("button", { name: "Retry" })
+    );
+
+    expect(
+        screen.queryByText("Error: Failed to fetch employees")
+    ).not.toBeInTheDocument();
+
+    expect(
+        await screen.findByText("Loading employees...")
+    ).toBeInTheDocument();
+});
+
+test("clears error and displays employees after successful retry", async () => {
+    const user = userEvent.setup();
+    const testStore = createAppStore();
+
+    const mock = vi.spyOn(globalThis, "fetch");
+    mock.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+    } as Response);
+
+    mock.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+            users: [
+                {
+                    id: 701,
+                    firstName: "Anita",
+                    lastName: "Sharma",
+                    email: "anita@example.com"
+                },
+            ],
+            total: 1,
+            skip: 0,
+            limit: 1
+        })
+    } as Response)
+
+    render(
+        <Provider store={testStore}>
+            <EmployeeApi />
+        </Provider>
+    );
+
+    expect(await screen.findByText("Error: Failed to fetch employees")).toBeInTheDocument()
+    expect(screen.getByRole("button", { name : "Retry" })).toBeInTheDocument();
+
+    await user.click(
+        screen.getByRole("button", { name: "Retry" })
+    );
+    
+    expect(await screen.findByText("Anita Sharma")).toBeInTheDocument();
+    
+    expect(
+        screen.queryByText("Error: Failed to fetch employees")
+    ).not.toBeInTheDocument();
+
+    expect(
+        screen.queryByText("Loading employees...")
+    ).not.toBeInTheDocument();
 });

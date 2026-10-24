@@ -1,11 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import favoritesReducer from "../features/favorites/favoritesSlice";
 
-export const store = configureStore({
-    reducer: {
-        favorites: favoritesReducer,
-    },
-});
+export const createAppStore = () => 
+    configureStore({
+        reducer: {
+            favorites: favoritesReducer,
+        },
+    });
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export const store = createAppStore();
+
+export type AppStore = ReturnType<typeof createAppStore>;
+export type RootState = ReturnType<AppStore["getState"]>;
+export type AppDispatch = AppStore["dispatch"];
