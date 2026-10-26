@@ -1,9 +1,9 @@
-import { render, screen, cleanup } from "@testing-library/react";
+import { screen, cleanup } from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
 import EmployeeApi from "./EmployeeApi";
-import { Provider } from "react-redux";
-import { createAppStore } from "../app/store";
+import { renderWithProviders } from "../test/test-utils";
 import userEvent from "@testing-library/user-event";
+import { mockEmployees, mockAnita } from "../test/mockEmployees";
 
 afterEach(() => {
     cleanup();
@@ -11,17 +11,11 @@ afterEach(() => {
 });
 
 test("displays loading message while API request is pending", () => {
-    const testStore = createAppStore();
-
     vi.spyOn(globalThis, "fetch").mockImplementation(
         () => new Promise<Response>(() => {})
     );
 
-    render(
-        <Provider store={testStore}>
-            <EmployeeApi />
-        </Provider>
-    );
+    renderWithProviders(<EmployeeApi />);
 
     expect(
         screen.getByText("Loading employees...")
@@ -29,36 +23,17 @@ test("displays loading message while API request is pending", () => {
 })
 
 test("displays employees when API request succeeds", async () => {
-    const testStore = createAppStore();
-
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-            users: [
-                {
-                    id: 101,
-                    firstName: "Ravi",
-                    lastName: "Gaud",
-                    email: "ravi@example.com",
-                },
-                {
-                    id: 102,
-                    firstName: "Priya",
-                    lastName: "Sharma",
-                    email: "priya@example.com"
-                },
-            ],
+            users: mockEmployees,
             total: 2,
             skip: 0,
             limit: 2,
         }),
     } as Response);
 
-    render(
-        <Provider store={testStore}>
-            <EmployeeApi />
-        </Provider>
-    );
+    renderWithProviders(<EmployeeApi />);
 
     expect(await screen.findByText("Ravi Gaud")).toBeInTheDocument();
     expect(screen.getByText("ravi@example.com")).toBeInTheDocument();
@@ -70,18 +45,12 @@ test("displays employees when API request succeeds", async () => {
 });
 
 test("displays error message when API request fails", async () => {
-    const testStore = createAppStore();
-
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
         ok: false,
         status: 500
     } as Response);
 
-    render(
-        <Provider store={testStore}>
-            <EmployeeApi />
-        </Provider>
-    );
+    renderWithProviders(<EmployeeApi />);
 
     expect(await screen.findByText("Error: Failed to fetch employees")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Retry" }));
@@ -90,8 +59,7 @@ test("displays error message when API request fails", async () => {
 test("retries API request when Retry button is clicked", async () => {
     const user = userEvent.setup();
     const fetchMock = vi.spyOn(globalThis, "fetch");
-    const testStore = createAppStore();
-
+    
     fetchMock.mockResolvedValueOnce({
         ok: false,
         status: 500
@@ -100,25 +68,14 @@ test("retries API request when Retry button is clicked", async () => {
     fetchMock.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-            users: [
-                {
-                    id: 201,
-                    firstName: "Anita",
-                    lastName: "Sharma",
-                    email: "anita@example.com"
-                },
-            ],
+            users: [mockAnita],
             total: 1,
             skip: 0,
             limit: 1
         })
     } as Response)
 
-    render(
-        <Provider store={testStore}>
-            <EmployeeApi />
-        </Provider>
-    )
+    renderWithProviders(<EmployeeApi />);
 
     expect(await screen.findByText("Error: Failed to fetch employees")).toBeInTheDocument();
     await user.click(
@@ -131,8 +88,7 @@ test("retries API request when Retry button is clicked", async () => {
 
 test("filters employees when the user searches by name", async () => {
     const user = userEvent.setup();
-    const testStore = createAppStore();
-
+    
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
         ok: true,
         json: async () => ({
@@ -156,11 +112,7 @@ test("filters employees when the user searches by name", async () => {
         }),
     } as Response);
 
-    render(
-        <Provider store={testStore}>
-            <EmployeeApi />
-        </Provider>
-    );
+    renderWithProviders(<EmployeeApi />);
 
     //Wait until the API data is displayed.
     expect(await screen.findByText("Ravi Gaud")).toBeInTheDocument();
@@ -178,8 +130,7 @@ test("filters employees when the user searches by name", async () => {
 
 test("displays no employees found when search has no matches", async () => {
     const user = userEvent.setup();
-    const testStore = createAppStore();
-
+    
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
         ok: true,
         json: async () => ({
@@ -197,11 +148,7 @@ test("displays no employees found when search has no matches", async () => {
         })
     } as Response);
 
-    render(
-        <Provider store={testStore}>
-            <EmployeeApi />
-        </Provider>
-    );
+    renderWithProviders(<EmployeeApi />);
 
     expect(await screen.findByText("Ravi Gaud")).toBeInTheDocument();
 
@@ -216,8 +163,7 @@ test("displays no employees found when search has no matches", async () => {
 
 test("searches employees case-insensitively", async () => {
     const user = userEvent.setup();
-    const testStore = createAppStore();
-
+    
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
         ok: true,
         json: async () => ({
@@ -232,11 +178,7 @@ test("searches employees case-insensitively", async () => {
         })
     } as Response);
 
-    render(
-        <Provider store={testStore}>
-            <EmployeeApi />
-        </Provider>
-    );
+    renderWithProviders(<EmployeeApi />);
 
     expect(await screen.findByText("Ravi Gaud")).toBeInTheDocument();
     await user.type(
@@ -249,8 +191,7 @@ test("searches employees case-insensitively", async () => {
 
 test("adds and remove an employee from favorites", async () => {
     const user = userEvent.setup();
-    const testStore = createAppStore();
-
+    
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
         ok: true,
         json: async () => ({
@@ -268,11 +209,7 @@ test("adds and remove an employee from favorites", async () => {
         }),
     } as Response);
 
-    render(
-        <Provider store={testStore}>
-            <EmployeeApi />
-        </Provider>
-    );
+    renderWithProviders(<EmployeeApi />);
 
     // Wait until the API employee appears
     await screen.findByText("Ravi Gaud");
@@ -298,8 +235,7 @@ test("adds and remove an employee from favorites", async () => {
 
 test("displays loading while retry request is pending", async () => {
     const user = userEvent.setup();
-    const testStore = createAppStore();
-
+    
     const mock = vi.spyOn(globalThis, "fetch");
     mock.mockResolvedValueOnce({
         ok: false,
@@ -310,11 +246,7 @@ test("displays loading while retry request is pending", async () => {
         () => new Promise<Response>(() => {})
     );
 
-    render(
-        <Provider store={testStore}>
-            <EmployeeApi />
-        </Provider>
-    );
+    renderWithProviders(<EmployeeApi />);
 
     expect(await screen.findByText("Error: Failed to fetch employees")).toBeInTheDocument()
     expect(screen.getByRole("button", { name : "Retry" })).toBeInTheDocument();
@@ -334,8 +266,7 @@ test("displays loading while retry request is pending", async () => {
 
 test("clears error and displays employees after successful retry", async () => {
     const user = userEvent.setup();
-    const testStore = createAppStore();
-
+    
     const mock = vi.spyOn(globalThis, "fetch");
     mock.mockResolvedValueOnce({
         ok: false,
@@ -359,11 +290,7 @@ test("clears error and displays employees after successful retry", async () => {
         })
     } as Response)
 
-    render(
-        <Provider store={testStore}>
-            <EmployeeApi />
-        </Provider>
-    );
+    renderWithProviders(<EmployeeApi />);
 
     expect(await screen.findByText("Error: Failed to fetch employees")).toBeInTheDocument()
     expect(screen.getByRole("button", { name : "Retry" })).toBeInTheDocument();

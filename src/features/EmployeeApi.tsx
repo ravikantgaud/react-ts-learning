@@ -32,9 +32,7 @@ const ApiEmployeeCard = memo(function ApiEmployeeCard({
         employee: Employee;
         isFavorite: boolean;
         onToggleFavorite: (id: number, isFavorite: boolean) => void;
-    }) {
-        console.log("ApiEmployeeCard rendered:", employee.id);
-
+    }) {        
         return (
             <div>
                 <h3>{employee.name}</h3>
@@ -98,7 +96,6 @@ function EmployeeApi() {
     }
 
     const filteredEmployees = useMemo(() => {
-        console.log("Filtering Employees");
         return employees.filter((employee) => 
            employee.name.toLowerCase().includes(searchTerm.toLowerCase())
        );        

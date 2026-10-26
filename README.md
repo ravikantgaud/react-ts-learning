@@ -435,3 +435,12 @@ npm run test:run
 - EmployeeCard tests: 4 passed
 - Employee API tests: 10 passed
 - Total: 14 tests passed across 2 test files
+
+### Testing maintainability
+- Debug log cleanup
+- Reusable renderWithProviders() test helper
+- Fresh Redux store per test
+- Shared mock employee fixtures
+- getByText() vs queryByText() vs findByText()
+- Flaky-test prevention and asynchronous UI assertions
+- Validation commands: npx tsc --noEmit and npm run test:run
