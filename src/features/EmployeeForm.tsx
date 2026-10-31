@@ -17,12 +17,12 @@ function EmployeeForm() {
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const handleSubmit = ((e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if(!name || !email || !role || !experience) return;
+        if(!name.trim() || !email.trim() || !role.trim() || !experience) return;
 
-        const newEmplyee: Employee = {
+        const newEmployee: Employee = {
             id: Date.now(),
             name,
             email,
@@ -30,17 +30,17 @@ function EmployeeForm() {
             experience: Number(experience)
         }
 
-        setEmployees((previousEmplyee) => [...previousEmplyee, newEmplyee]);
+        setEmployees((previousEmployee) => [...previousEmployee, newEmployee]);
 
         setName('');
         setEmail('');
         setRole('');
         setExperience('');
-    });
+    };
 
     const handleDeleteEmployee = (id: number) => {
-        setEmployees(() => (
-            employees.filter((employee) => employee.id !== id)
+        setEmployees((previousEmployees) => (
+            previousEmployees.filter((employee) => employee.id !== id)
         ))
     }
 
@@ -51,10 +51,10 @@ function EmployeeForm() {
     return(
         <div className="employee-Form">
             <form onSubmit={handleSubmit}>
-                <p>Name: <input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} /> </p>
-                <p>Email: <input type="email" name="Email" value={email} onChange={(e) => setEmail(e.target.value)} /> </p>
-                <p>Role: <input type="text" name="role" value={role} onChange={(e) => setRole(e.target.value)} /> </p>
-                <p>Experience: <input type="number" name="experience" value={experience} onChange={(e) => setExperience(e.target.value)} /> </p>
+                <p><label htmlFor="employee-name">Name:</label> <input id="employee-name" type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} /> </p>
+                <p><label htmlFor="employee-email">Email:</label> <input id="employee-email" type="email" name="Email" value={email} onChange={(e) => setEmail(e.target.value)} /> </p>
+                <p><label htmlFor="employee-role">Role:</label> <input id="employee-role" type="text" name="role" value={role} onChange={(e) => setRole(e.target.value)} /> </p>
+                <p><label htmlFor="employee-experience">Experience:</label> <input id="employee-experience" type="number" name="experience" value={experience} onChange={(e) => setExperience(e.target.value)} /> </p>
                 <button type="submit">Add Employee</button>
             </form>
 
@@ -63,7 +63,7 @@ function EmployeeForm() {
             <div className="employee-List">
                 {
                     filteredEmployees.map((employee) => (
-                        <div className="emplyee-Card" key={employee.id}>
+                        <div className="employee-Card" key={employee.id}>
                             <p>{employee.name}</p>
                             <p>{employee.email}</p>
                             <p>{employee.role}</p>

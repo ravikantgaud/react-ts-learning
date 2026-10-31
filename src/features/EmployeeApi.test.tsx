@@ -1,4 +1,4 @@
-import { screen, cleanup } from "@testing-library/react";
+import { screen, cleanup, within } from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
 import EmployeeApi from "./EmployeeApi";
 import { renderWithProviders } from "../test/test-utils";
@@ -189,7 +189,7 @@ test("searches employees case-insensitively", async () => {
     expect(screen.queryByText("Ravi Gaud")).toBeInTheDocument();
 });
 
-test("adds and remove an employee from favorites", async () => {
+test("adds and removes an employee from favorites", async () => {
     const user = userEvent.setup();
     
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
@@ -212,7 +212,7 @@ test("adds and remove an employee from favorites", async () => {
     renderWithProviders(<EmployeeApi />);
 
     // Wait until the API employee appears
-    await screen.findByText("Ravi Gaud");
+    expect(await screen.findByText("Ravi Gaud")).toBeInTheDocument();
 
     // Step 1: Add to favorites
     await user.click(
@@ -308,4 +308,47 @@ test("clears error and displays employees after successful retry", async () => {
     expect(
         screen.queryByText("Loading employees...")
     ).not.toBeInTheDocument();
+});
+
+
+test("adds and remove an employee to favorites", async () => {
+    const user = userEvent.setup();
+
+    const { store } = renderWithProviders(<EmployeeApi />);
+
+    const employeeName = await screen.findByText("Emily Johnson");
+
+    const employeeCard = employeeName.closest("div");
+
+    const addFavoriteButton = within(employeeCard!).getByRole("button", { name: "Add Favorite" });
+
+    expect(
+        await screen.findAllByRole("button", { name: "Add Favorite" })
+    ).toHaveLength(30);
+
+    expect(
+        store.getState().favorites.favoriteEmployeeIds
+    ).not.toContain(101);
+
+    await user.click(addFavoriteButton);
+
+    expect(
+        within(employeeCard!).getByRole("button", {
+            name: "Remove Favorite",
+        })
+    ).toBeInTheDocument();
+
+    await user.click(
+        screen.getByRole("button", { name: "Remove Favorite" })
+    );
+
+    expect(
+        store.getState().favorites.favoriteEmployeeIds
+    ).not.toContain(101);
+
+    expect(
+        within(employeeCard!).getByRole("button", {
+            name: "Add Favorite",
+        })
+    ).toBeInTheDocument();
 });
