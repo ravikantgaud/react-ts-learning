@@ -1,5 +1,4 @@
 import { useEffect, useState, memo, useCallback, useMemo } from "react";
-import { Link } from "react-router";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { addFavorite, removeFavorite } from "./favorites/favoritesSlice";
 import { selectFavoriteEmployeeIds } from "./favorites/favoritesSelectors";
@@ -44,15 +43,13 @@ const ApiEmployeeCard = memo(function ApiEmployeeCard({
             </div>
         );
     });
-    
-function EmployeeApi() {
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [employees, setEmployees] = useState<Employee[]>([]);
-    const [searchTerm, setSearchTerm] = useState("");
 
-    const fetchEmployees = async (): Promise<UsersResponse> => {
-        const response = await fetch("https://dummyjson.com/users");
+    const fetchEmployees = async (searchTerm: string, signal: AbortSignal): Promise<UsersResponse> => {
+        const query = searchTerm.trim();
+
+        const url = query ? `https://dummyjson.com/users/search?q=${encodeURIComponent(query)}` : "https://dummyjson.com/users";
+
+        const response = await fetch(url, { signal });
 
         if(!response.ok){
             throw new Error("Failed to fetch employees");
@@ -68,38 +65,95 @@ function EmployeeApi() {
             name: `${user.firstName} ${user.lastName}`,
             email: user.email,
         };
-    };
+    };    
 
-    const loadEmployees = async () => {
+function EmployeeApi() {
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [isSearching, setIsSearching] = useState(false);
+    const [employees, setEmployees] = useState<Employee[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [retryCount, setRetryCount] = useState(0);
+
+
+    const loadEmployees = async (searchTerm: string, signal: AbortSignal, isActive: () => boolean) => {
         try{
-            setLoading(true);
+            if(searchTerm.trim()) {
+                setIsSearching(true);
+            } else{
+                setLoading(true);
+            }
             setError(null);
 
-            const data = await fetchEmployees();
-            
-            const employee = data.users.map(mapApiUserToEmployee)
-            
-            setEmployees(employee);
+            const data = await fetchEmployees(searchTerm, signal);
+            if(isActive()){
+                const employee = data.users.map(mapApiUserToEmployee)
+                
+                setEmployees(employee);
+            }
         } catch (error){
-            setError(error instanceof Error ? error.message : "Something went wrong");
+            if(!isActive()) return;
+
+            if (error instanceof Error && error.name === "AbortError") {
+                // Ignore intentional cancellation
+            } else{
+                setError(error instanceof Error ? error.message : "Something went wrong");
+            }
         } finally{
-            setLoading(false);
+            if(isActive()) {
+                setIsSearching(false);
+                setLoading(false);
+            }
         }
     }
 
     useEffect(() => {
-        loadEmployees();
-    }, []);
+        const controller = new AbortController();
+        let isActive = true;
+
+        const loadEmployees = async () => {
+            try {
+                if (searchTerm.trim()) {
+                    setIsSearching(true);
+                } else {
+                    setLoading(true);
+                }
+
+                setError(null);
+
+                const data = await fetchEmployees(searchTerm, controller.signal);
+
+                if(isActive) {
+                    const employee = data.users.map(mapApiUserToEmployee);
+                    setEmployees(employee);
+                }
+            } catch (error) {
+                if(!isActive) return;
+
+                if (error instanceof Error && error.name === "AbortError") {
+                    //Ignore intentional cancellation
+                } else {
+                    setError(error instanceof Error ? error.message : "Something went wrong");
+                }
+            } finally {
+                if(isActive) {
+                    setIsSearching(false);
+                    setLoading(false);
+                }
+            }
+        };
+
+        void loadEmployees();
+
+        return () => {
+            isActive = false;
+            controller.abort();
+        };
+    }, [searchTerm, retryCount]);
 
     const handleRetry = () => {
-        loadEmployees();
+        setRetryCount((prev) => prev + 1);
     }
-
-    const filteredEmployees = useMemo(() => {
-        return employees.filter((employee) => 
-           employee.name.toLowerCase().includes(searchTerm.toLowerCase())
-       );        
-    }, [employees, searchTerm])
 
     const dispatch = useAppDispatch();
 
@@ -142,12 +196,14 @@ function EmployeeApi() {
                         onChange={(e) => setSearchTerm(e.target.value)} />
             </p>
 
+            {isSearching && <p>Searching employees...</p>}
+
             {
-                (filteredEmployees.length === 0) ?
+                (employees.length === 0) ?
                 (
                     <p>No employees found.</p>
                 ) : (
-                    filteredEmployees.map((employee) => {
+                    employees.map((employee) => {
                         const isFavorite = favoriteEmployeeIds.includes(employee.id);
 
                         return (

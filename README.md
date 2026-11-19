@@ -444,3 +444,64 @@ npm run test:run
 - getByText() vs queryByText() vs findByText()
 - Flaky-test prevention and asynchronous UI assertions
 - Validation commands: npx tsc --noEmit and npm run test:run
+
+## Day 23 — Advanced React Testing
+
+### Topics Learned
+
+- Asynchronous React testing
+- API race conditions
+- AbortController
+- useEffect cleanup
+- Stale response prevention using an `isActive` flag
+- Loading, success, and error state transitions
+- API retry testing
+- Deferred Promises
+- Testing out-of-order API responses
+- `findByText()` vs. `waitFor()`
+- Testing component unmount and request cancellation
+
+### Practice
+
+- Tested loading state disappearance after a successful API response.
+- Tested API error handling.
+- Tested Retry functionality with sequential mocked API responses.
+- Verified that a successful retry displays employee data and removes the error message.
+- Tested AbortController cleanup when the component unmounts.
+- Created a deferred Promise helper to control API response timing.
+- Simulated multiple search requests resolving out of order.
+- Verified that an older API response cannot overwrite the latest search result.
+
+### Key Concepts Learned
+
+- `findBy` waits for an element to appear asynchronously.
+- `waitFor` retries an assertion until it passes or times out.
+- `AbortController` attempts to cancel an ongoing API request.
+- The cleanup function of `useEffect` runs before the effect executes again when its dependencies change.
+- Each effect execution can maintain its own `isActive` flag.
+- An `isActive` flag prevents stale API responses from updating component state.
+- AbortController and stale-response protection solve related but different problems.
+- API race conditions can cause older responses to overwrite newer results if they are not handled properly.
+- Testing out-of-order responses helps verify that search results remain consistent.
+
+### Files Updated
+
+- `src/features/EmployeeApi.tsx`
+- `src/features/EmployeeApi.test.tsx`
+- `README.md`
+
+### Validation
+
+- TypeScript check: `npx tsc --noEmit`
+- Test command: `npm run test:run`
+- EmployeeCard tests: 4 passed
+- Employee API tests: 16 passed
+- EmployeeForm tests: 7 passed
+- **Total: 27 tests passed across 3 test files**
+
+### Testing Principles
+
+- Test asynchronous behaviour through observable UI changes.
+- Verify both successful and unsuccessful API scenarios.
+- Test request cancellation and stale-response protection.
+- Prefer isolated, deterministic tests using controlled API responses.
