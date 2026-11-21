@@ -505,3 +505,60 @@ npm run test:run
 - Verify both successful and unsuccessful API scenarios.
 - Test request cancellation and stale-response protection.
 - Prefer isolated, deterministic tests using controlled API responses.
+
+## Day 24 – Advanced Vitest Mocking and Mock Cleanup
+
+### Topics Covered
+
+- `vi.fn()` vs `vi.spyOn()`
+- `mockReturnValue()` vs `mockImplementation()`
+- `mockResolvedValueOnce()` vs `mockRejectedValueOnce()`
+- Default mock implementations and one-time overrides
+- `mockClear()` vs `mockReset()` vs `mockRestore()`
+- `vi.clearAllMocks()` vs `vi.resetAllMocks()` vs `vi.restoreAllMocks()`
+- Centralized mock cleanup using `afterEach()`
+- Spying on existing service methods and global `fetch`
+
+### Hands-on Practice
+
+Created an employee service with:
+- `getEmployeeCount()` – Returns the employee count.
+- `getEmployees()` – Fetches employees from an API and handles unsuccessful HTTP responses.
+
+Created `employeeService.test.ts` to verify:
+
+1. Spying on an existing service method.
+2. Overriding the original return value using `mockReturnValue()`.
+3. Restoring the original implementation using `mockRestore()`.
+4. Mocking global `fetch` using `vi.spyOn()`.
+5. Testing successful API responses using `mockResolvedValue()`.
+6. Testing unsuccessful API responses using `rejects.toThrow()`.
+7. Cleaning up spies centrally using `afterEach()` and `vi.restoreAllMocks()`.
+
+### Key Learnings
+
+- `vi.fn()` creates a new mock function, while `vi.spyOn()` monitors an existing method.
+- `mockReturnValue()` provides a fixed value, while `mockImplementation()` executes custom logic.
+- One-time mock implementations take priority over default implementations.
+- `mockClear()` clears call history without removing the implementation.
+- `mockReset()` clears call history and removes the mock implementation.
+- `mockRestore()` restores the original implementation of a spy.
+- Global cleanup methods apply corresponding operations across mocks.
+- Mocking `fetch` allows testing service logic without making real API requests.
+
+### Files Created / Updated
+
+- `src/services/employeeService.ts`
+- `src/services/employeeService.test.ts`
+
+### Validation
+
+- Full project test suite: 30 tests passed across 4 test files.
+- TypeScript validation: `npx tsc --noEmit` completed successfully (exit code 0).
+
+### Important Testing Principles
+
+- Mock only external dependencies when testing service logic.
+- Restore spies to prevent test pollution.
+- Use `afterEach()` for centralized cleanup.
+- Verify observable results and expected function calls.
